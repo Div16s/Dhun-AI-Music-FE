@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Space_Grotesk } from "next/font/google";
 import { Providers } from "~/components/providers";
 import { Toaster } from "~/components/ui/sonner";
 
@@ -29,11 +29,20 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html
+      lang="en"
+      className={`${geist.variable} ${spaceGrotesk.variable} dark`}
+      suppressHydrationWarning
+    >
       <body className="min-h-svh flex flex-col">
         <Providers>
           {children}
