@@ -1,0 +1,8 @@
+{
+  // This project runs Prisma 6 (see package.json). The Prisma VS Code
+  // extension defaults to the Prisma 7 language server, which wrongly flags
+  // the valid `url = env("DATABASE_URL")` datasource field. Pin the language
+  // server to v6 so its diagnostics match the version we actually build with.
+  "prisma.pinToPrisma6": true,
+  "prisma.hidePrisma6Prompts": true
+}
