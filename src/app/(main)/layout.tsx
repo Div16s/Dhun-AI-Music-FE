@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Space_Grotesk } from "next/font/google";
 import { Providers } from "~/components/providers";
 import { Toaster } from "~/components/ui/sonner";
 import {
@@ -12,6 +12,7 @@ import {
 import { AppSidebar } from "~/components/sidebar/app-sidebar";
 import { Separator } from "@base-ui/react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "~/components/ui/breadcrumb";
+import BreadcrumbPageClient from "~/components/sidebar/breadcrumb-page-client";
 
 export const metadata: Metadata = {
   title: {
@@ -37,14 +38,30 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html
+      lang="en"
+      className={`${geist.variable} ${spaceGrotesk.variable} dark`}
+      suppressHydrationWarning
+    >
       <body className="flex min-h-svh flex-col">
         <Providers>
-          <SidebarProvider>
+          <SidebarProvider
+            style={
+              {
+                "--sidebar-width": "14rem",
+                "--sidebar-width-icon": "4rem",
+              } as React.CSSProperties
+            }
+          >
             <AppSidebar />
             <SidebarInset className="flex h-screen flex-col">
               <header className="bg-background sticky-top z-10 border-b px-4 py-2">
@@ -57,9 +74,7 @@ export default function RootLayout({
                   <Breadcrumb>
                     <BreadcrumbList>
                       <BreadcrumbItem>
-                        <BreadcrumbLink render={<a href="/" />}>
-                          Home
-                        </BreadcrumbLink>
+                        <BreadcrumbPageClient />
                       </BreadcrumbItem>
                     </BreadcrumbList>
                   </Breadcrumb>
