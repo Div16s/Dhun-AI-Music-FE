@@ -21,6 +21,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1087.0",
+    "@aws-sdk/s3-request-presigner": "^3.1087.0",
     "@base-ui/react": "^1.6.0",
     "@better-auth-ui/core": "^1.6.27",
     "@better-auth-ui/react": "^1.6.27",

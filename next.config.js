@@ -12,6 +12,14 @@ const config = {
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Allow S3-hosted song thumbnails/covers (served via presigned URLs).
+    // Region-agnostic so it survives bucket/region changes.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.amazonaws.com",
+      },
+    ],
   },
 };
 
