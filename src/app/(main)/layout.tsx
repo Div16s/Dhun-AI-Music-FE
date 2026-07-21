@@ -63,7 +63,7 @@ export default function RootLayout({
             }
           >
             <AppSidebar />
-            <SidebarInset className="flex h-screen flex-col">
+            <SidebarInset className="flex h-screen min-w-0 flex-col">
               <header className="bg-background sticky-top z-10 border-b px-4 py-2">
                 <div className="flex shrink-0 grow items-center gap-2">
                   <SidebarTrigger className="-ml-1" />
