@@ -6,10 +6,13 @@ function Slider({
   className,
   defaultValue,
   value,
+  onValueChange,
   min = 0,
   max = 100,
   ...props
-}: SliderPrimitive.Root.Props) {
+}: Omit<SliderPrimitive.Root.Props, "onValueChange"> & {
+  onValueChange?: (value: number[]) => void
+}) {
   const _values = Array.isArray(value)
     ? value
     : Array.isArray(defaultValue)
@@ -22,6 +25,9 @@ function Slider({
       data-slot="slider"
       defaultValue={defaultValue}
       value={value}
+      onValueChange={(next) =>
+        onValueChange?.(Array.isArray(next) ? next : [next])
+      }
       min={min}
       max={max}
       thumbAlignment="edge"
