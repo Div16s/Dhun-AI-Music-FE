@@ -134,6 +134,8 @@ export const generateSong = inngest.createFunction(
               song_s3_key: string;
               cover_image_s3_key: string;
               categories: string[];
+              title?: string;
+              prompt?: string;
             })
           : null;
 
@@ -144,23 +146,38 @@ export const generateSong = inngest.createFunction(
           data: {
             s3Key: responseData?.song_s3_key,
             thumbnailS3Key: responseData?.cover_image_s3_key,
+            ...(responseData?.title?.trim()
+              ? { title: responseData.title.trim() }
+              : {}),
+            ...(responseData?.prompt?.trim()
+              ? { prompt: responseData.prompt.trim() }
+              : {}),
             status: response.ok ? "processed" : "failed",
           },
         });
 
-        if (responseData && responseData.categories.length > 0) {
+        const categories = Array.from(
+          new Set(
+            (responseData?.categories ?? [])
+              .map((c) => c.trim().toLowerCase())
+              .filter(
+                (c) =>
+                  c.length > 0 && c.length <= 30 && c.split(/\s+/).length <= 3,
+              ),
+          ),
+        ).slice(0, 5);
+
+        if (categories.length > 0) {
           await db.song.update({
             where: {
               id: songId,
             },
             data: {
               categories: {
-                connectOrCreate: responseData.categories.map(
-                  (categoryName) => ({
-                    where: { name: categoryName },
-                    create: { name: categoryName },
-                  }),
-                ),
+                connectOrCreate: categories.map((categoryName) => ({
+                  where: { name: categoryName },
+                  create: { name: categoryName },
+                })),
               },
             },
           });
@@ -194,6 +211,6 @@ export const generateSong = inngest.createFunction(
       });
     }
 
-    return { message: `Task ${event.data.id} complete`, result };
+    return { message: `Task ${songId} complete` };
   },
 );
