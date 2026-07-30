@@ -11,6 +11,7 @@ import { renameSong, setPublishedStatus } from "~/actions/song";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { RenameDialog } from "./rename-dialog";
 import { useRouter } from "next/navigation";
+import { usePlayerStore } from "~/stores/use-player-store";
 
 export interface Track {
   id: string;
@@ -34,6 +35,7 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
   const [loadingTrackId, setLoadingTrackId] = useState<string | null>(null);
   const [trackToRename, setTrackToRename] = useState<Track | null>(null);
   const router = useRouter();
+  const setTrack = usePlayerStore((state) => state.setTrack);
 
   const filteredTracks = tracks.filter(
     (track) =>
@@ -50,7 +52,15 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
     setLoadingTrackId(track.id);
     const playUrl = await getPlayUrl(track.id);
     setLoadingTrackId(null);
-    console.log(playUrl);
+
+    setTrack({
+      id: track.id,
+      title: track.title,
+      url: playUrl,
+      thumbnail: track.thumbnailUrl,
+      prompt: track.prompt,
+      createdBy: track.createdByUsername
+    });
   }
 
   const handleRefresh = async () => {
@@ -204,7 +214,7 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
                           {track.published ? "Unpublish" : "Publish"}
                         </Button>
                         <DropdownMenu>
-                            <DropdownMenuTrigger>
+                            <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
                                 <Button variant={"ghost"} size={"icon"}>
                                     <MoreHorizontal />
                                 </Button>
