@@ -40,9 +40,7 @@ export const auth = betterAuth({
                     successUrl: "/",
                     authenticatedUsersOnly: true
                 }),
-                portal({
-                    returnUrl: env.BETTER_AUTH_URL,
-                }),
+                portal(),
                 webhooks({
                     secret: env.POLAR_WEBHOOK_SECRET,
                     onOrderPaid: async (order) => {
