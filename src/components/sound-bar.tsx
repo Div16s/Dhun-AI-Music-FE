@@ -114,7 +114,7 @@ export default function SoundBar() {
 
   return (
     <div className="px-4 pb-2">
-      <Card className="bg-background/60 relative w-full shrink-0 border-t py-0 backdrop-blur">
+      <Card className="bg-card/70 relative w-full shrink-0 rounded-xl border py-0 shadow-lg backdrop-blur-md">
         <div className="space-y-2 p-3">
           <div className="flex items-center justify-between">
             <div className="flex min-w-0 flex-1 items-center gap-2">
@@ -128,7 +128,7 @@ export default function SoundBar() {
                     sizes="40px"
                   />
                 ) : (
-                  <Music className="h-4 w-4 text-white" />
+                  <Music className="text-primary-foreground h-4 w-4" />
                 )}
               </div>
               <div className="min-w-0 max-w-40 md:max-w-64">
@@ -142,17 +142,22 @@ export default function SoundBar() {
             </div>
 
             <div className="absolute left-1/2 -translate-x-1/2">
-              <Button variant={"ghost"} size={"icon"} onClick={togglePlay}>
+              <Button
+                size={"icon"}
+                onClick={togglePlay}
+                aria-label={isPlaying ? "Pause" : "Play"}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 w-10 rounded-full shadow-md"
+              >
                 {isPlaying ? (
-                  <Pause className="h-4 w-4" />
+                  <Pause className="h-5 w-5 fill-current" />
                 ) : (
-                  <Play className="h-4 w-4" />
+                  <Play className="h-5 w-5 fill-current" />
                 )}
               </Button>
             </div>
 
             <div className="flex items-center gap-2">
-              <Volume2 className="h-4 w-4 shrink-0" />
+              <Volume2 className="text-muted-foreground h-4 w-4 shrink-0" />
               <div className="w-16 shrink-0">
                 <Slider
                   className="**:data-[slot=slider-range]:bg-foreground/80"
@@ -167,7 +172,11 @@ export default function SoundBar() {
                 <Dialog>
                   <DialogTrigger
                     render={
-                      <Button variant={"outline"} size={"sm"}>
+                      <Button
+                        variant={"ghost"}
+                        size={"sm"}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
                         View Prompt
                       </Button>
                     }
@@ -186,8 +195,10 @@ export default function SoundBar() {
                 </Dialog>
               )}
               <Button
-                variant={"outline"}
+                variant={"ghost"}
                 size={"icon"}
+                aria-label="Download"
+                className="text-muted-foreground hover:text-foreground"
                 onClick={() => {
                   if (!track?.url) return;
                   window.open(track?.url, "_blank");
