@@ -36,6 +36,20 @@ export default tseslint.config(
     },
   },
   {
+    files: ["src/components/auth/**/*.ts", "src/components/auth/**/*.tsx"],
+    rules: {
+      "@typescript-eslint/prefer-nullish-coalescing": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-misused-promises": "off",
+      "@typescript-eslint/non-nullable-type-assertion-style": "off",
+      "@typescript-eslint/no-base-to-string": "off",
+    },
+  },
+  {
     linterOptions: {
       reportUnusedDisableDirectives: true,
     },

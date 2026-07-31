@@ -25,7 +25,7 @@ export function RenameDialog({
 }) {
   const [title, setTitle] = useState(track.title ?? "");
 
-  const handleSubmit = (e: InputEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (title.trim()) {
       onRename(track.id, title.trim());

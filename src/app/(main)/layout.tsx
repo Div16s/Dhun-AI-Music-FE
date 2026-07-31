@@ -11,7 +11,7 @@ import {
 } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/sidebar/app-sidebar";
 import { Separator } from "@base-ui/react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "~/components/ui/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList } from "~/components/ui/breadcrumb";
 import BreadcrumbPageClient from "~/components/sidebar/breadcrumb-page-client";
 import SoundBar from "~/components/sound-bar";
 

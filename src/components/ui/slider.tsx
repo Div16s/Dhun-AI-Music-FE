@@ -26,7 +26,9 @@ function Slider({
       defaultValue={defaultValue}
       value={value}
       onValueChange={(next) =>
-        onValueChange?.(Array.isArray(next) ? next : [next])
+        onValueChange?.(
+          Array.isArray(next) ? (next as number[]) : [next as number],
+        )
       }
       min={min}
       max={max}

@@ -37,7 +37,7 @@ export default function SoundBar() {
         setIsPlaying(false);
     }
     else{
-        audioRef.current.play();
+        void audioRef.current.play();
         setIsPlaying(true);
     }
   }
@@ -134,7 +134,7 @@ export default function SoundBar() {
               </div>
               <div className="min-w-0 max-w-40 md:max-w-64">
                 <p className="text-foreground truncate text-sm font-medium">
-                  {track?.title || "Untitled"}
+                  {track?.title?.trim() ? track.title : "Untitled"}
                 </p>
                 <p className="text-muted-foreground truncate text-xs">
                   {track?.createdBy}
