@@ -118,7 +118,7 @@ export default function SoundBar() {
         <div className="space-y-2 p-3">
           <div className="flex items-center justify-between">
             <div className="flex min-w-0 flex-1 items-center gap-2">
-              <div className="from-primary to-accent relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-linear-to-br">
+              <div className="from-primary to-green-600 relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-linear-to-br">
                 {track?.thumbnail ? (
                   <Image
                     className="object-cover"
