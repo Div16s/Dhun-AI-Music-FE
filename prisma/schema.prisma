@@ -55,7 +55,7 @@ model Song {
   published         Boolean    @default(false)
   listenCount       Int        @default(0)
   likes             Like[]
-  categories        Cateogry[]
+  categories        Category[]
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 
@@ -74,7 +74,7 @@ model Like {
   @@id([userId, songId])
 }
 
-model Cateogry {
+model Category {
   id    String @id @default(cuid())
   name  String @unique
   songs Song[]
