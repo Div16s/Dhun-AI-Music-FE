@@ -13,8 +13,8 @@ import { Logo } from "~/components/logo"
 import SidebarMenuItems from "./sidebar-menu-items"
 import { Credits } from "./credit"
 import { UserButton } from "../auth/user/user-button"
-import { User } from "lucide-react"
 import Upgrade from "./upgrade"
+import { CustomerPortalItem } from "./customer-portal-item"
 
 export async function AppSidebar() {
   return (
@@ -48,12 +48,12 @@ export async function AppSidebar() {
         </div>
         <UserButton
           variant="outline"
-          links={[{ label: "My Profile", href: "/profile", icon: <User /> }]}
+          links={[<CustomerPortalItem key="billing" />]}
           className="group-data-[collapsible=icon]:hidden"
         />
         <UserButton
           size="icon"
-          links={[{ label: "My Profile", href: "/profile", icon: <User /> }]}
+          links={[<CustomerPortalItem key="billing" />]}
           className="mx-auto hidden group-data-[collapsible=icon]:flex"
         />
       </SidebarFooter>
