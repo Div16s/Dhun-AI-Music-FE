@@ -158,16 +158,18 @@ export default function SoundBar() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Volume2 className="text-muted-foreground h-4 w-4 shrink-0" />
-              <div className="w-16 shrink-0">
-                <Slider
-                  className="**:data-[slot=slider-range]:bg-foreground/80"
-                  value={volume}
-                  onValueChange={setVolume}
-                  step={1}
-                  max={100}
-                  min={0}
-                />
+              <div className="hidden items-center gap-2 sm:flex">
+                <Volume2 className="text-muted-foreground h-4 w-4 shrink-0" />
+                <div className="w-16 shrink-0">
+                  <Slider
+                    className="**:data-[slot=slider-range]:bg-foreground/80"
+                    value={volume}
+                    onValueChange={setVolume}
+                    step={1}
+                    max={100}
+                    min={0}
+                  />
+                </div>
               </div>
               {promptText && (
                 <Dialog>
