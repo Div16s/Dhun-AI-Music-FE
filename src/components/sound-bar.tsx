@@ -126,6 +126,7 @@ export default function SoundBar() {
                     alt="Music"
                     fill
                     sizes="40px"
+                    unoptimized
                   />
                 ) : (
                   <Music className="text-primary-foreground h-4 w-4" />

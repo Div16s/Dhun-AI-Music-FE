@@ -177,6 +177,7 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
                             alt={track.title ?? "thumbnail"}
                             width="48"
                             height="48"
+                            unoptimized
                           />
                         ) : (
                           <div className="bg-muted flex h-full w-full items-center justify-center">

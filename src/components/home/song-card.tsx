@@ -58,6 +58,7 @@ export function SongCard({ song }: { song: SongWithRelation }) {
               fill
               sizes="(max-width: 768px) 50vw, (max-width: 1280px) 20vw, 160px"
               className="object-cover object-center"
+              unoptimized
             />
           ) : (
             <div className="bg-muted flex h-full w-full items-center justify-center">

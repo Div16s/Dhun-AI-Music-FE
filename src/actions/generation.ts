@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import { auth } from "~/lib/auth";
 import { db } from "~/server/db";
 import { inngest } from "~/inngest/client";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_cache } from "next/cache";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { env } from "~/env";
@@ -57,23 +57,31 @@ async function queueSong(generateRequest: GenerateRequest, userId: string) {
   });
 }
 
+const s3Client = new S3Client({
+  region: env.AWS_REGION,
+  credentials: {
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+const getCachedPreSignedUrl = unstable_cache(
+  async (key: string) => {
+    const command = new GetObjectCommand({
+      Bucket: env.S3_BUCKET_NAME,
+      Key: key,
+    });
+
+    return await getSignedUrl(s3Client, command, {
+      expiresIn: 60 * 60 * 24,
+    });
+  },
+  ["s3-presigned-url"],
+  { revalidate: 60 * 60 * 12 },
+);
+
 export async function getPreSignedUrl(key: string) {
-  const s3Client = new S3Client({
-    region: env.AWS_REGION,
-    credentials: {
-      accessKeyId: env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-    },
-  });
-
-  const command = new GetObjectCommand({
-    Bucket: env.S3_BUCKET_NAME,
-    Key: key,
-  });
-
-  return await getSignedUrl(s3Client, command, {
-    expiresIn: 3600,
-  });
+  return getCachedPreSignedUrl(key);
 }
 
 export async function getPlayUrl(songId: string) {
