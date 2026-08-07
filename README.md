@@ -48,8 +48,6 @@ So Dhun AI became my playground for wiring together a modern full-stack app with
 
 ## How it works (architecture)
 
-📐 **Editable diagram:** [`docs/architecture.excalidraw`](docs/architecture.excalidraw) — open it at [excalidraw.com](https://excalidraw.com) (File → Open).
-
 ```mermaid
 flowchart LR
     B["Browser<br/>(Next.js UI)"] -->|server actions| S["Next.js Server<br/>(Actions + Route Handlers)"]
@@ -73,8 +71,6 @@ The key architectural decision: **generation never happens inside a request**. T
 ## The core flow: prompt → song
 
 This is the heart of the app — an async, durable pipeline.
-
-📐 **Editable diagram:** [`docs/song-generation-flow.excalidraw`](docs/song-generation-flow.excalidraw)
 
 ```mermaid
 sequenceDiagram
