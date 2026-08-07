@@ -110,6 +110,53 @@ sequenceDiagram
 
 ---
 
+## Concurrency control (fair, per-user queueing)
+
+Every song is a real GPU job on Modal — expensive and slow. The moment I let users kick these off freely, I had a problem to solve: **what stops one impatient user from firing 20 generations at once and hogging the whole GPU backend (and running up my Modal bill) while everyone else waits?**
+
+I solved it with **Inngest's per-key concurrency** on the `generate-song` function ([`src/inngest/functions.ts`](src/inngest/functions.ts)). The function is configured with a concurrency **limit of 1**, **keyed by `userId`**.
+
+**What this actually does:**
+
+- The **key partitions the queue by `userId`** — Inngest maintains a separate virtual concurrency lane per user.
+- With a limit of **1**, **each user runs at most one generation at a time**. If they submit a second (or tenth) while one is in flight, those events aren't dropped — Inngest **holds them and runs them one after another** (FIFO) as the previous one finishes.
+- Crucially, this is **per user, not global**: user A's backlog of 10 songs never blocks user B, whose job runs immediately in its own lane. Different users still generate **in parallel**.
+
+```mermaid
+flowchart TB
+    subgraph EV["generate-song-event stream"]
+      e1["User A · song 1"]
+      e2["User A · song 2"]
+      e3["User A · song 3"]
+      e4["User B · song 1"]
+    end
+
+    e1 & e2 & e3 --> QA
+    e4 --> QB
+
+    subgraph laneA["Lane: userId = A (limit 1)"]
+      QA["queue: [2, 3]"] --> RA["running: song 1"]
+    end
+    subgraph laneB["Lane: userId = B (limit 1)"]
+      QB["queue: []"] --> RB["running: song 1"]
+    end
+
+    RA -->|on finish, pull next| QA
+    RA --> M["Modal GPU"]
+    RB --> M
+```
+
+**Why I chose this design:**
+
+- **Fairness** — resource access is spread across users instead of first-come-first-served on a shared pool. No single account can starve the others.
+- **Cost & backpressure** — it caps how many concurrent Modal invocations a user can trigger, which keeps GPU spend predictable and shields the backend from bursts (a natural backpressure valve in front of an expensive service).
+- **Correctness under retries** — each run is durable. Steps that already succeeded aren't re-executed on retry, and if a run ultimately fails, the function's `onFailure` handler flips the song to `status = "failed"` so the UI never shows a job stuck in `processing` forever.
+- **It composes with credits** — because runs are serialized per user, the credit check and decrement happen one job at a time for that user, avoiding races on the balance.
+
+> 🔧 **Tuning knob:** the limit is the lever. Raise it to let a user generate a few tracks in parallel, or add an **account-level** concurrency cap (a second, keyless concurrency rule) to bound total simultaneous GPU jobs across the whole app independent of per-user limits.
+
+---
+
 ## Payments & credits
 
 ```mermaid
