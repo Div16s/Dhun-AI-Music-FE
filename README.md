@@ -11,8 +11,9 @@ I built **Dhun AI** to answer a simple question I kept coming back to: *what if 
 I wanted to go beyond a toy "call an API and show the result" demo and actually build the hard parts of a real product:
 
 - **Long-running AI jobs** that don't fit in a single request (music generation takes real GPU time), so I needed a durable, retryable pipeline instead of a hanging HTTP call.
-- **A real credits + payments loop** so usage is metered and monetizable.
-- **A polished, themeable player experience** — not just a download link, but a proper "now playing" bar, a discover feed, likes, and publishing.
+- **Orchestrating multiple AI models into one product** — I wanted to chain an LLM "planner," a music model (ACE-Step), and an image model (SDXL) into a single coherent pipeline, and learn how to make separate models cooperate rather than calling one API in isolation.
+- **Serverless GPU infrastructure** — I'd never run heavy ML inference in production, so I used this to learn Modal: spinning up GPUs on demand, keeping cold-starts sane, and not babysitting servers.
+- **Event-driven, durable workflows** — I specifically wanted hands-on experience with the event-driven pattern — decoupling the request from the work, and getting retries, observability, and step-level durability for free with Inngest.
 
 So Dhun AI became my playground for wiring together a modern full-stack app with a serverless GPU backend.
 
