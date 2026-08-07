@@ -154,6 +154,54 @@ flowchart TB
 
 ---
 
+## Performance
+
+Beyond throughput (the concurrency story above), I spent real effort on the two other dimensions that shape how the app *feels*: **actual latency** and **perceived latency**.
+
+### 1. Asset delivery — cached presigned URLs, no re-encoding
+
+This was my sharpest before/after win. Cover art is stored in S3 and served through **presigned URLs**. Originally those thumbnails were slow and would sometimes not render at all — and the cause was subtle.
+
+Every server render minted a *fresh* signed URL (a new signature each time), and I was passing those through **Next's image optimizer**. Because the URL changed on every render, the optimizer's cache never hit — so it **re-fetched the image from S3 and re-encoded it on every single request**. With ~100 covers on the discover feed that's a lot of redundant work, and if the signed URL was near its expiry by the time the optimizer fetched it, the whole thing failed and the image just… didn't appear.
+
+The fix had two parts: **bypass the optimizer** so the browser loads the small cover straight from S3 (in parallel, browser-cached), and **cache the presigned URL itself** so the same stable URL is reused across renders (with a long expiry so it never dies mid-session).
+
+```mermaid
+flowchart LR
+    subgraph before["❌ Before — optimizer on per-render signed URLs"]
+      B1[Browser] --> OPT["Next image optimizer"]
+      OPT -->|re-fetch + re-encode<br/>every render, cache never hits| S3a[(S3)]
+    end
+    subgraph after["✅ After — cached URL, direct load"]
+      B2[Browser] -->|stable cached signed URL<br/>load direct, browser-cached| S3b[(S3)]
+    end
+```
+
+The result: covers load immediately and reliably, S3 sees a fraction of the traffic, and the cards and player share the same cached image.
+
+### 2. Latency — the slow work never blocks the request
+
+The whole generation pipeline exists so that the **user's request returns in milliseconds**. Creating a song does only two cheap things synchronously — insert a row and emit an event — then hands off to Inngest. The user never waits on a GPU behind an open HTTP connection; they get an instant "queued" response and the UI fills in as the job progresses. (See [Concurrency control](#concurrency-control-fair-per-user-queueing) and the core flow above.)
+
+### 3. Perceived latency — optimistic UI
+
+For interactions that don't need to block on the server, I update the UI **first** and reconcile after. Liking a song flips the heart and adjusts the count **immediately** in local state, *then* fires the server action in the background — so the tap feels instant even on a slow connection.
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant UI as SongCard (local state)
+    participant S as Server action
+
+    U->>UI: tap like
+    UI-->>U: heart + count update instantly
+    UI->>S: toggleLikeSong() (in background)
+```
+
+Together these cover the three performance axes: **throughput/cost** (per-user concurrency), **real latency** (async offload + URL caching), and **perceived latency** (optimistic updates and streamed server components).
+
+---
+
 ## Payments & credits
 
 ```mermaid
