@@ -198,6 +198,17 @@ sequenceDiagram
     UI->>S: toggleLikeSong() (in background)
 ```
 
+### 4. Streaming UI with server components
+
+The `/create` page doesn't wait for everything before showing anything. The song-creation panel and layout render instantly, while the track list — which fetches songs *and* presigns every thumbnail server-side — is wrapped in a `<Suspense>` boundary and **streamed in** when ready. The user sees and can use the create form immediately instead of staring at a blank page until the whole route resolves.
+
+```mermaid
+flowchart LR
+    R["/create request"] --> SHELL["Shell paints now<br/>(SongPanel + layout)"]
+    SHELL -. Suspense boundary .-> TL["TrackListFetcher<br/>(query + presign)"]
+    TL -->|streams in when ready| DONE["Track list appears"]
+```
+
 Together these cover the three performance axes: **throughput/cost** (per-user concurrency), **real latency** (async offload + URL caching), and **perceived latency** (optimistic updates and streamed server components).
 
 ---
